@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  environment {
+    IMAGE = 'shayanmalik99/midterm-app:latest'
+  }
+
   stages {
     stage('Checkout') {
       steps {
@@ -38,7 +42,18 @@ pipeline {
 
     stage('Build Image') {
       steps {
-        sh 'docker build -t midterm-app:latest .'
+        sh 'docker build -t $IMAGE .'
+      }
+    }
+
+    stage('Push to Docker Hub') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
+          sh '''
+            echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
+            docker push $IMAGE
+          '''
+        }
       }
     }
 
@@ -46,7 +61,7 @@ pipeline {
       steps {
         sh '''
           docker rm -f midterm-app || true
-          docker run -d --name midterm-app --restart unless-stopped -p 8000:8000 midterm-app:latest
+          docker run -d --name midterm-app --restart unless-stopped -p 8000:8000 $IMAGE
           for i in 1 2 3 4 5 6 7 8 9 10; do
             if curl -sf http://localhost:8000/metrics; then exit 0; fi
             sleep 3
