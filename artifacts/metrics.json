@@ -1,0 +1,8 @@
+{
+  "student_id": "FA23-BDS-037",
+  "accuracy": 0.893333,
+  "training_rows": 300,
+  "model_version": "a9a783c23baa",
+  "dataset_sha256": "a9a783c23baa65849fb2cf39473efa8cabbfd44a7a56efe191bb65feac9e7e7f",
+  "git_sha": "local"
+}
