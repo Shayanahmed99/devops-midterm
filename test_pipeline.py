@@ -8,4 +8,3 @@ def test_metrics_valid():
         assert k in m
     assert m["accuracy"] > 0.5
     assert m["training_rows"] >= 100
-
