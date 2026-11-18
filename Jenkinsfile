@@ -15,6 +15,8 @@ pipeline {
             userRemoteConfigs: [[url: 'https://github.com/Shayanahmed99/devops-midterm.git']]
           ])
           env.GIT_COMMIT = scmVars.GIT_COMMIT
+          env.COMMITTER_EMAIL = sh(script: "git log -1 --pretty=format:%ae", returnStdout: true).trim()
+          env.COMMITTER_NAME = sh(script: "git log -1 --pretty=format:%an", returnStdout: true).trim()
         }
       }
     }
@@ -76,11 +78,12 @@ pipeline {
   post {
     always {
       emailext(
-        to: 'qasimalik@gmail.com',
+        to: "${env.COMMITTER_EMAIL}",
         from: 'shayanahmedmalik99@gmail.com',
         subject: "FA23-BDS-037 build ${currentBuild.currentResult} #${env.BUILD_NUMBER}",
         body: """Student Reg No: FA23-BDS-037
 Result: ${currentBuild.currentResult}
+Committed by: ${env.COMMITTER_NAME} <${env.COMMITTER_EMAIL}>
 Commit: ${env.GIT_COMMIT}
 Build: ${env.BUILD_URL}"""
       )
